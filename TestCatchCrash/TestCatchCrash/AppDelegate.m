@@ -23,11 +23,20 @@
     ViewController *testVc = [[ViewController alloc] init];
     self.window.rootViewController = testVc;
     self.window.backgroundColor = [UIColor whiteColor];
-    [self.window makeKeyAndVisible];
     
     // 注册系统异常捕获
-    [[CatchCrashManager shared] registExceptionHandler];
-    [[CatchCrashManager shared] registSignalExceptionHandler];
+    CatchCrashManager *ccrashManager = [CatchCrashManager shared];
+    [ccrashManager registExceptionHandler];
+    [ccrashManager registSignalExceptionHandler];
+    ccrashManager.normalExceptionBlock = ^(NSString *error) {
+        NSString *receive = error;
+    };
+    ccrashManager.signalExceptionBlock = ^(NSString *error) {
+        NSString *receive = error;
+    };
+    
+    // 这句一定放最后面，即所有操作都应该在此之前
+    [self.window makeKeyAndVisible];
     
     return YES;
 }

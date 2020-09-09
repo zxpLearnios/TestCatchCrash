@@ -21,10 +21,10 @@
     // 1.
     NSString * test = @"11";
     NSArray *aaa =[NSArray arrayWithObject:test];
-    //    [aaa objectAtIndex:2];
+        [aaa objectAtIndex:2];
 
     // 2.
-    [self testCrash];
+//    [self testCrash];
 }
 
 

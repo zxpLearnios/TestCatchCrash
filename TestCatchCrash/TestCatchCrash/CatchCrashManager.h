@@ -4,10 +4,18 @@
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
 
+typedef void (^CatchCrashManagerExceptionBlock)(NSString *error);
+typedef void (^CatchCrashManagerSignalExceptionBlock)(NSString *error);
+
 @interface CatchCrashManager : NSObject
 
 /// 在崩溃发生后，是否继续运行app, 若继续运行则性能会大大不如以前
 @property (nonatomic, assign) BOOL isGoOnRunWhenExecption;
+
+/// 普通异常、系统异常
+@property (nonatomic, copy) CatchCrashManagerExceptionBlock normalExceptionBlock;
+/// signal异常
+@property (nonatomic, copy) CatchCrashManagerSignalExceptionBlock signalExceptionBlock;
 
 void uncaughtExceptionHandler(NSException *exception);
 

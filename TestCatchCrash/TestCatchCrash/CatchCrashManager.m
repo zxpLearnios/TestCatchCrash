@@ -78,6 +78,14 @@ void uncaughtExceptionHandler(NSException *exception)
     
     // 拼接全部错误信息,  异常栈、具体的异常位置
     NSString *allErrorInfo = [exceptionInfo stringByAppendingFormat:@"，\n %@", errorPlace];
+    
+    
+    // 回调异常信息
+    if ([CatchCrashManager shared].normalExceptionBlock) {
+        [CatchCrashManager shared].normalExceptionBlock(allErrorInfo);
+    }
+    
+    
     NSString *file =[NSString stringWithFormat:@"%@/Documents/error.log", NSHomeDirectory()];
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if (![fileManager fileExistsAtPath:file]) { // 文件不存在
@@ -111,6 +119,11 @@ void uncaughtExceptionHandler(NSException *exception)
     }
     
     // 执行sdk的异常处理
+    if (previousExceptionHandler != nil) {
+        NSDictionary *allErrorInfoDic = @{@"allError": allErrorInfo};
+        NSException *exception = [NSException exceptionWithName:name reason:reason userInfo:allErrorInfoDic];
+        previousExceptionHandler(exception);
+    }
     
     // 是否继续运行app
     if ([CatchCrashManager shared].isGoOnRunWhenExecption) {
@@ -194,6 +207,14 @@ void SignalExceptionHandler(int signal)
    for (i = 0; i <frames; ++i) {
        [mstr appendFormat:@"signal异常：%s\n", strs[i]];
    }
+    
+    
+    // 回调异常信息
+    if ([CatchCrashManager shared].signalExceptionBlock) {
+        [CatchCrashManager shared].signalExceptionBlock(mstr);
+    }
+    
+    
    // 保存信息
     UIAlertController *alert = [[UIAlertController alloc]init];
     UIAlertAction *sureAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
